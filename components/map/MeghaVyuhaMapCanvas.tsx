@@ -1,16 +1,18 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Map, { NavigationControl, type MapRef } from "react-map-gl/maplibre";
+import Map, { Marker, type MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Layer as DeckLayer, PickingInfo } from "@deck.gl/core";
-import { BitmapLayer, ScatterplotLayer, PathLayer, PolygonLayer, TextLayer } from "@deck.gl/layers";
+import { BitmapLayer, ScatterplotLayer, PathLayer, PolygonLayer } from "@deck.gl/layers";
 import { DeckOverlay } from "@/components/map/DeckOverlay";
 import { useRaiseStore, type BasemapMode, INDIA_VIEW } from "@/store/useRaiseStore";
 import {
   generateBitmap,
   bitmapToDataURL,
   SIM_BOUNDS,
+  BITMAP_W,
+  BITMAP_H,
   getScenarioSystems,
   rainfallToRGBA,
 } from "@/lib/simulation/weatherEngine";
@@ -103,18 +105,25 @@ export default function MeghaVyuhaMapCanvas({ onDistrictClick }: MapCanvasProps)
     activeScenario,
   } = useRaiseStore();
 
-  const [rainfallImage, setRainfallImage] = useState<string>("");
+  const [rainfallImage, setRainfallImage] = useState<ImageData | string>("");
 
   // ── Generate weather systems for current scenario ─────────────────────────
   const systems = useMemo(() => getScenarioSystems(activeScenario), [activeScenario]);
 
-  // ── Generate rainfall bitmap (runs in useMemo, recalc when inputs change) ──
-  // We defer to state update to avoid blocking initial render.
+  // ── Generate rainfall bitmap synchronously without async decoding flicker ──
   useEffect(() => {
     const threshold = THRESHOLD_MM[probabilityThreshold] ?? 64.5;
     const rgba = generateBitmap(
       systems, hourOffset, model, viewMode, threshold, differenceBaseline
     );
+    if (typeof ImageData !== "undefined") {
+      try {
+        setRainfallImage(new ImageData(rgba as any, BITMAP_W, BITMAP_H));
+        return;
+      } catch {
+        // fallback to data URL if ImageData constructor is constrained
+      }
+    }
     const url = bitmapToDataURL(rgba);
     setRainfallImage(url);
   }, [systems, hourOffset, model, viewMode, probabilityThreshold, differenceBaseline]);
@@ -259,22 +268,6 @@ export default function MeghaVyuhaMapCanvas({ onDistrictClick }: MapCanvasProps)
           getFillColor: (d) =>
             d.type === "capital" ? [255, 59, 78, 230] : [210, 230, 255, 160],
           pickable: false,
-        }),
-        new TextLayer({
-          id: "cities-labels",
-          data: MAJOR_CITIES,
-          getPosition: (d) => [d.lon, d.lat],
-          getText: (d) => d.name,
-          getSize: 10,
-          getColor: [240, 248, 255, 200],
-          getTextAnchor: "start",
-          getAlignmentBaseline: "center",
-          getPixelOffset: [7, 0],
-          fontFamily: "Inter, sans-serif",
-          fontWeight: 600,
-          background: true,
-          getBackgroundColor: [6, 10, 20, 150],
-          backgroundPadding: [3, 1],
         })
       );
     }
@@ -301,24 +294,6 @@ export default function MeghaVyuhaMapCanvas({ onDistrictClick }: MapCanvasProps)
           getFillColor: selectedDistrictId,
           getLineColor: selectedDistrictId,
         },
-      }),
-      new TextLayer({
-        id: "district-labels",
-        data: districtPoints,
-        getPosition: (d) => [d.lon, d.lat],
-        getText: (d) => d.name,
-        getSize: (d) => (d.selected ? 12 : 10),
-        getColor: (d) =>
-          d.selected ? [0, 212, 255, 255] : [230, 240, 255, 180],
-        getTextAnchor: "middle",
-        getAlignmentBaseline: "bottom",
-        getPixelOffset: [0, -12],
-        fontFamily: "Inter, sans-serif",
-        fontWeight: 700,
-        background: true,
-        getBackgroundColor: [6, 10, 20, 170],
-        backgroundPadding: [4, 2],
-        pickable: true,
       })
     );
 
@@ -355,7 +330,94 @@ export default function MeghaVyuhaMapCanvas({ onDistrictClick }: MapCanvasProps)
           isDragging ? "grabbing" : isHovering ? "pointer" : "grab"
         }
       />
-      <NavigationControl position="bottom-right" showCompass={false} />
+
+      {/* Major City Labels (HTML Markers - Crisp & avoids WebGL font atlas corruption) */}
+      {mapLayers.cities &&
+        MAJOR_CITIES.map((city) => (
+          <Marker
+            key={city.name}
+            longitude={city.lon}
+            latitude={city.lat}
+            anchor="left"
+            style={{ pointerEvents: "none" }}
+          >
+            <div
+              style={{
+                marginLeft: 7,
+                padding: "1px 5px",
+                background: "rgba(6, 10, 20, 0.78)",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                borderRadius: 3,
+                fontSize: 9.5,
+                fontWeight: 600,
+                color: "rgba(240, 248, 255, 0.9)",
+                whiteSpace: "nowrap",
+                fontFamily: "var(--font-ui)",
+                lineHeight: 1.2,
+                userSelect: "none",
+              }}
+            >
+              {city.name}
+            </div>
+          </Marker>
+        ))}
+
+      {/* District Target Markers */}
+      {districtPoints.map((district) => (
+        <Marker
+          key={district.id}
+          longitude={district.lon}
+          latitude={district.lat}
+          anchor="bottom"
+          onClick={(e) => {
+            e.originalEvent.stopPropagation();
+            onDistrictClick(district.id);
+          }}
+        >
+          <div
+            style={{
+              marginBottom: 10,
+              padding: district.selected ? "3px 8px" : "2px 6px",
+              background: district.selected
+                ? "rgba(0, 30, 60, 0.92)"
+                : "rgba(6, 10, 20, 0.82)",
+              border: district.selected
+                ? "1px solid #00d4ff"
+                : "1px solid rgba(80, 140, 255, 0.3)",
+              borderRadius: 4,
+              fontSize: district.selected ? 11 : 9.5,
+              fontWeight: district.selected ? 700 : 600,
+              color: district.selected ? "#00d4ff" : "#e6f0ff",
+              whiteSpace: "nowrap",
+              fontFamily: "var(--font-ui)",
+              cursor: "pointer",
+              userSelect: "none",
+              boxShadow: district.selected
+                ? "0 0 12px rgba(0, 212, 255, 0.5)"
+                : "0 2px 6px rgba(0,0,0,0.5)",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            <span>{district.name}</span>
+            {district.selected && (
+              <span
+                style={{
+                  fontSize: 8.5,
+                  padding: "1px 4px",
+                  borderRadius: 2,
+                  background: "rgba(0, 212, 255, 0.2)",
+                  color: "#00d4ff",
+                  fontFamily: "var(--font-mono)",
+                }}
+              >
+                TARGET
+              </span>
+            )}
+          </div>
+        </Marker>
+      ))}
     </Map>
   );
 }
@@ -373,27 +435,35 @@ export function CompareModeLayout({
 
   const systems = useMemo(() => getScenarioSystems(activeScenario), [activeScenario]);
 
-  const [rawImage, setRawImage] = useState("");
-  const [adaptiveImage, setAdaptiveImage] = useState("");
+  const [rawImage, setRawImage] = useState<ImageData | string>("");
+  const [adaptiveImage, setAdaptiveImage] = useState<ImageData | string>("");
 
   useEffect(() => {
     const rawRgba = generateBitmap(systems, hourOffset, "raw", "amount");
-    setRawImage(bitmapToDataURL(rawRgba));
     const adaptRgba = generateBitmap(systems, hourOffset, "adaptive", "amount");
+    if (typeof ImageData !== "undefined") {
+      try {
+        setRawImage(new ImageData(rawRgba as any, BITMAP_W, BITMAP_H));
+        setAdaptiveImage(new ImageData(adaptRgba as any, BITMAP_W, BITMAP_H));
+        return;
+      } catch {}
+    }
+    setRawImage(bitmapToDataURL(rawRgba));
     setAdaptiveImage(bitmapToDataURL(adaptRgba));
   }, [systems, hourOffset]);
 
   const makeLayers = useCallback(
-    (imageUrl: string, id: string): DeckLayer[] => {
+    (image: ImageData | string, id: string): DeckLayer[] => {
       const layers: DeckLayer[] = [];
-      if (imageUrl) {
+      if (image) {
         layers.push(
           new BitmapLayer({
             id: `${id}-bitmap`,
             bounds: BITMAP_BOUNDS,
-            image: imageUrl,
+            image,
             opacity: 0.80,
             pickable: false,
+            parameters: { blend: true },
           })
         );
       }

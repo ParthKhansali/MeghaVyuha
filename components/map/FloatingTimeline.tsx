@@ -35,13 +35,12 @@ export function FloatingTimeline() {
       const delta = (timestamp - lastTimeRef.current) / 1000; // seconds elapsed
       lastTimeRef.current = timestamp;
 
-      // Advance 6h per second at 1× speed
-      const hoursPerSecond = 6 * speed;
+      // Advance 8h per second at 1× speed so 10 days takes 30s
+      const hoursPerSecond = 8 * speed;
       setHourOffset((h) => {
         const next = h + hoursPerSecond * delta;
         if (next >= MAX_HOURS) {
-          setPlaying(false);
-          return MAX_HOURS;
+          return 0; // loop seamlessly back to start
         }
         return next;
       });
@@ -62,6 +61,21 @@ export function FloatingTimeline() {
       if (animRef.current) cancelAnimationFrame(animRef.current);
     };
   }, [playing, animate]);
+
+  // ── Keyboard shortcut: Space to toggle play/pause ───────────────────────
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "Space" && e.target === document.body) {
+        e.preventDefault();
+        setPlaying((p) => {
+          if (!p && hourOffset >= MAX_HOURS) setHourOffset(0);
+          return !p;
+        });
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [hourOffset, setHourOffset]);
 
   // ── Track click/drag ────────────────────────────────────────────────────
   const getHourFromPointer = useCallback((clientX: number) => {
@@ -100,7 +114,16 @@ export function FloatingTimeline() {
   const stepBy = useCallback(
     (delta: number) => {
       setPlaying(false);
-      setHourOffset((h) => Math.max(0, Math.min(MAX_HOURS, h + delta)));
+      setHourOffset((h) => {
+        if (delta > 0) {
+          const currentDay = Math.floor(h / 24);
+          return Math.min(MAX_HOURS, (currentDay + 1) * 24);
+        } else if (delta < 0) {
+          const currentDay = Math.ceil(h / 24);
+          return Math.max(0, (currentDay - 1) * 24);
+        }
+        return Math.max(0, Math.min(MAX_HOURS, h + delta));
+      });
     },
     [setHourOffset]
   );
@@ -124,21 +147,21 @@ export function FloatingTimeline() {
         flexDirection: "column",
         gap: 6,
         padding: "10px 18px 8px",
-        background: "rgba(4, 7, 14, 0.90)",
+        background: "rgba(4, 7, 14, 0.92)",
         border: "1px solid rgba(80, 140, 255, 0.28)",
         borderRadius: 20,
         backdropFilter: "blur(18px)",
         boxShadow: "0 8px 32px rgba(0,0,0,0.65)",
-        minWidth: 540,
+        width: "min(600px, calc(100% - 36px))",
         userSelect: "none",
       }}
     >
       {/* Top row: time display + controls */}
-      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
         {/* Valid time */}
-        <div style={{ minWidth: 150 }}>
+        <div style={{ minWidth: 140 }}>
           <div style={{ fontSize: 8, color: "var(--text-faint)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
-            Valid Time
+            VALID TIME
           </div>
           <div style={{ fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--cyan)", fontWeight: 700, lineHeight: 1.2 }}>
             {validLabel}
@@ -148,85 +171,99 @@ export function FloatingTimeline() {
           </div>
         </div>
 
-        {/* Step back */}
-        <button
-          onClick={() => stepBy(-6)}
-          title="Step back 6h"
-          style={iconBtnStyle}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="19 20 9 12 19 4 19 20" />
-            <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" strokeWidth="2" />
-          </svg>
-        </button>
-
-        {/* Play/Pause */}
-        <button
-          onClick={() => setPlaying(!playing)}
-          title={playing ? "Pause animation (Space)" : "Play animation (Space)"}
-          aria-label={playing ? "Pause animation" : "Play animation"}
-          style={{
-            width: 36, height: 36, borderRadius: "50%", border: "none",
-            background: playing
-              ? "linear-gradient(135deg, #004499 0%, #0070cc 100%)"
-              : "linear-gradient(135deg, #0070cc 0%, #00d4ff 100%)",
-            color: "#fff", cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: `0 0 ${playing ? 20 : 14}px rgba(0, 212, 255, ${playing ? 0.6 : 0.4})`,
-            flexShrink: 0, transition: "all 0.2s ease",
-          }}
-        >
-          {playing ? (
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" />
+        {/* Playback Controls (1-day stepping & play/pause) */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          {/* Step back 1 Day */}
+          <button
+            onClick={() => stepBy(-24)}
+            title="Step back 1 Day (-24h)"
+            aria-label="Step back 1 Day"
+            style={{ ...iconBtnStyle, padding: "0 6px", width: "auto", display: "flex", alignItems: "center", gap: 3 }}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="19 20 9 12 19 4 19 20" />
+              <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" strokeWidth="2" />
             </svg>
-          ) : (
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: 2 }}>
-              <polygon points="5 3 19 12 5 21 5 3" />
+            <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", fontWeight: 700 }}>-1d</span>
+          </button>
+
+          {/* Play/Pause */}
+          <button
+            onClick={() => {
+              if (hourOffset >= MAX_HOURS) {
+                setHourOffset(0);
+              }
+              setPlaying(!playing);
+            }}
+            title={playing ? "Pause animation (Space)" : "Play animation (Space)"}
+            aria-label={playing ? "Pause animation" : "Play animation"}
+            style={{
+              width: 36, height: 36, borderRadius: "50%", border: "none",
+              background: playing
+                ? "linear-gradient(135deg, #004499 0%, #0070cc 100%)"
+                : "linear-gradient(135deg, #0070cc 0%, #00d4ff 100%)",
+              color: "#fff", cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              boxShadow: `0 0 ${playing ? 20 : 14}px rgba(0, 212, 255, ${playing ? 0.6 : 0.4})`,
+              flexShrink: 0, transition: "all 0.2s ease",
+            }}
+          >
+            {playing ? (
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" />
+              </svg>
+            ) : (
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: 2 }}>
+                <polygon points="5 3 19 12 5 21 5 3" />
+              </svg>
+            )}
+          </button>
+
+          {/* Step forward 1 Day */}
+          <button
+            onClick={() => stepBy(24)}
+            title="Step forward 1 Day (+24h)"
+            aria-label="Step forward 1 Day"
+            style={{ ...iconBtnStyle, padding: "0 6px", width: "auto", display: "flex", alignItems: "center", gap: 3 }}
+          >
+            <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", fontWeight: 700 }}>+1d</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 4 15 12 5 20 5 4" />
+              <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" strokeWidth="2" />
             </svg>
-          )}
-        </button>
-
-        {/* Step forward */}
-        <button
-          onClick={() => stepBy(6)}
-          title="Step forward 6h"
-          style={iconBtnStyle}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="5 4 15 12 5 20 5 4" />
-            <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" strokeWidth="2" />
-          </svg>
-        </button>
-
-        {/* Speed */}
-        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <span style={{ fontSize: 9, color: "var(--text-faint)", letterSpacing: "0.08em" }}>SPEED</span>
-          {[0.5, 1, 2, 4].map((s) => (
-            <button
-              key={s}
-              onClick={() => setSpeed(s)}
-              style={{
-                padding: "2px 6px",
-                borderRadius: 3,
-                border: speed === s ? "1px solid var(--cyan)" : "1px solid var(--hairline)",
-                background: speed === s ? "rgba(0,212,255,0.15)" : "transparent",
-                color: speed === s ? "var(--cyan)" : "var(--text-faint)",
-                fontSize: 9, fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-ui)",
-              }}
-            >
-              {s}×
-            </button>
-          ))}
+          </button>
         </div>
 
-        {/* Reset */}
-        <button onClick={() => { setPlaying(false); setHourOffset(0); }} style={iconBtnStyle} title="Reset to T+0">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="1 4 1 10 7 10" />
-            <path d="M3.51 15a9 9 0 1 0 .49-3" />
-          </svg>
-        </button>
+        {/* Speed & Reset */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
+            <span style={{ fontSize: 8.5, color: "var(--text-faint)", letterSpacing: "0.08em" }}>SPEED</span>
+            {[0.5, 1, 2, 4].map((s) => (
+              <button
+                key={s}
+                onClick={() => setSpeed(s)}
+                style={{
+                  padding: "2px 5px",
+                  borderRadius: 3,
+                  border: speed === s ? "1px solid var(--cyan)" : "1px solid var(--hairline)",
+                  background: speed === s ? "rgba(0,212,255,0.15)" : "transparent",
+                  color: speed === s ? "var(--cyan)" : "var(--text-faint)",
+                  fontSize: 8.5, fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-ui)",
+                }}
+              >
+                {s}×
+              </button>
+            ))}
+          </div>
+
+          {/* Reset */}
+          <button onClick={() => { setPlaying(false); setHourOffset(0); }} style={iconBtnStyle} title="Reset to T+0 (Day 0)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="1 4 1 10 7 10" />
+              <path d="M3.51 15a9 9 0 1 0 .49-3" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Timeline track */}
@@ -259,11 +296,48 @@ export function FloatingTimeline() {
         {LANDMARKS.map((lm) => {
           const x = (lm.h / MAX_HOURS) * 100;
           const isDay = lm.h % 24 === 0;
+          const isCurrentDay = Math.abs(hourOffset - lm.h) < 12;
           return (
-            <div key={lm.h} style={{ position: "absolute", left: `${x}%`, transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
-              <div style={{ width: isDay ? 1.5 : 1, height: isDay ? 12 : 7, background: isDay ? "rgba(0,212,255,0.5)" : "rgba(80,140,255,0.3)", marginTop: 0 }} />
-              {isDay && lm.h % 48 === 0 && (
-                <span style={{ fontSize: 8, color: "var(--text-faint)", whiteSpace: "nowrap", fontFamily: "var(--font-mono)", marginTop: 14 }}>
+            <div
+              key={lm.h}
+              onClick={(e) => {
+                e.stopPropagation();
+                setPlaying(false);
+                setHourOffset(lm.h);
+              }}
+              title={`Jump to ${lm.day} (+${lm.h}h)`}
+              style={{
+                position: "absolute",
+                left: `${x}%`,
+                transform: "translateX(-50%)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 1,
+                cursor: "pointer",
+                padding: "2px 4px",
+                zIndex: 3,
+              }}
+            >
+              <div
+                style={{
+                  width: isDay ? 2 : 1,
+                  height: isDay ? 12 : 7,
+                  background: isCurrentDay ? "#00d4ff" : isDay ? "rgba(0,212,255,0.5)" : "rgba(80,140,255,0.3)",
+                  borderRadius: 1,
+                }}
+              />
+              {isDay && (
+                <span
+                  style={{
+                    fontSize: 8,
+                    color: isCurrentDay ? "#00d4ff" : "var(--text-faint)",
+                    fontWeight: isCurrentDay ? 700 : 400,
+                    whiteSpace: "nowrap",
+                    fontFamily: "var(--font-mono)",
+                    marginTop: 12,
+                  }}
+                >
                   {lm.day}
                 </span>
               )}
@@ -281,7 +355,7 @@ export function FloatingTimeline() {
             border: "2px solid #ffffff",
             boxShadow: "0 0 10px #00d4ff, 0 0 4px #fff",
             cursor: "grab",
-            zIndex: 2,
+            zIndex: 4,
             transition: playing ? "none" : "left 0.1s",
           }}
         />

@@ -111,8 +111,8 @@ export const useMeghaVyuhaStore = create<MeghaVyuhaState>()((set) => ({
   activePage: "overview",
   model: "adaptive",
   viewMode: "amount",
-  hourOffset: 6,                        // start at +6h
-  leadDay: 1,
+  hourOffset: 0,                        // start at +0h (Day 0)
+  leadDay: 0,
   probabilityThreshold: "very-heavy",
   differenceBaseline: "raw",
   selectedDistrictId: "uttarakhand-dehradun",
@@ -131,7 +131,7 @@ export const useMeghaVyuhaStore = create<MeghaVyuhaState>()((set) => ({
   setHourOffset: (updater) =>
     set((state) => {
       const nextH = typeof updater === "function" ? updater(state.hourOffset) : updater;
-      const clamped = Math.max(0, Math.min(240, Math.round(nextH)));
+      const clamped = Math.max(0, Math.min(240, nextH));
       return { hourOffset: clamped, leadDay: hourOffsetToLeadDay(clamped) };
     }),
   setLeadDay: (updater) =>

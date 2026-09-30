@@ -5,7 +5,7 @@
 // Smart India Hackathon 2026 | PS 26080 | Against The Odds (Team 149284)
 
 import React, { useState, useMemo } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import {
   REGIONAL_ERROR_PROFILES,
   ERROR_TYPE_DEFINITIONS,
@@ -150,7 +150,7 @@ function FingerprintCard({
             />
             <Bar dataKey="value" radius={[3, 3, 0, 0]}>
               {barData.map((entry, idx) => (
-                <rect key={idx} fill={entry.fill} />
+                <Cell key={idx} fill={entry.fill} />
               ))}
             </Bar>
           </BarChart>

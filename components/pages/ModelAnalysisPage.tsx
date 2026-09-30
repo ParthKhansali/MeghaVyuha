@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip,
   RadarChart, Radar, PolarGrid, PolarAngleAxis,
   ResponsiveContainer, Legend,
 } from "recharts";
@@ -111,7 +111,7 @@ export default function ModelAnalysisPage() {
                 label={{ position: "insideRight", fontSize: 10, fill: "rgba(255,255,255,0.6)" }}
               >
                 {barData.map((entry) => (
-                  <rect key={entry.model} fill={MODEL_COLORS[entry.model as ForecastModel]} />
+                  <Cell key={entry.model} fill={MODEL_COLORS[entry.model as ForecastModel]} />
                 ))}
               </Bar>
             </BarChart>

@@ -49,7 +49,7 @@ export function MapLegend() {
       <div
         style={{
           position: "absolute",
-          bottom: 74,
+          bottom: 96,
           left: 18,
           zIndex: "var(--z-hud)",
           pointerEvents: "none",
@@ -77,7 +77,7 @@ export function MapLegend() {
       <div
         style={{
           position: "absolute",
-          bottom: 74,
+          bottom: 96,
           right: 18,
           zIndex: "var(--z-hud)",
           padding: "7px 12px",

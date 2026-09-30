@@ -6,7 +6,7 @@
 
 import React, { useState } from "react";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
 import {
   DAY1_PRIMARY_METRICS,
@@ -222,12 +222,26 @@ export default function ValidationPage() {
                 <YAxis domain={["dataMin - 0.5", "dataMax + 0.5"]} tick={{ fontSize: 8, fill: "var(--text-faint)" }} />
                 <Tooltip contentStyle={{ background: "#0a0f1c", border: "1px solid var(--hairline)", fontSize: 10 }} />
                 <Bar dataKey="crps" radius={[4, 4, 0, 0]}>
-                  {chartData.map((entry, idx) => (
-                    <rect
-                      key={idx}
-                      fill={entry.isAtlas ? "#22d68a" : entry.isRaw ? "#7a8ba4" : "#4a8fff"}
-                    />
-                  ))}
+                  {chartData.map((entry, idx) => {
+                    const nameLower = entry.name.toLowerCase();
+                    let color = "#38bdf8"; // default bright blue
+                    if (entry.isAtlas) {
+                      color = "#22d68a"; // vibrant green
+                    } else if (entry.isRaw) {
+                      color = "#94a3b8"; // light slate gray
+                    } else if (nameLower.includes("climatology")) {
+                      color = "#38bdf8"; // bright cyan/sky blue
+                    } else if (nameLower.includes("bias")) {
+                      color = "#818cf8"; // bright indigo/violet
+                    } else if (nameLower.includes("qm")) {
+                      color = "#fbbf24"; // bright amber
+                    } else if (nameLower.includes("hurdle")) {
+                      color = "#34d399"; // emerald
+                    } else if (nameLower.includes("emos")) {
+                      color = "#60a5fa"; // light royal blue
+                    }
+                    return <Cell key={`cell-${idx}`} fill={color} />;
+                  })}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
