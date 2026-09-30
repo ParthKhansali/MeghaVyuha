@@ -1,0 +1,5 @@
+Regime_Tier,N_Samples,CRPS_Raw,CRPS_Atlas,CRPSS_Atlas
+Dry (<2.5mm),160497,2.850,1.208,0.576
+Light (2.5-15mm),40550,6.106,5.230,0.143
+Heavy (15-64.5mm),21865,14.510,17.876,-0.232
+Extreme (>=64.5mm),1452,48.652,68.975,-0.418

@@ -1,0 +1,74 @@
+/* MEGHAVYUHA Design Tokens
+   Single source of truth for all visual variables.
+   Deck.gl colors are mirrored in lib/rainfallColors.ts */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  /* ── Base backgrounds ── */
+  --bg: #060810;
+  --bg-elev: #0a0e18;
+  --bg-panel: rgba(8, 12, 22, 0.88);
+  --bg-panel-solid: #0a0f1c;
+  --bg-panel-hover: rgba(12, 18, 32, 0.95);
+  --bg-card: rgba(10, 15, 26, 0.72);
+  --bg-input: rgba(255, 255, 255, 0.05);
+
+  /* ── Borders & hairlines ── */
+  --hairline: rgba(80, 140, 255, 0.10);
+  --hairline-strong: rgba(80, 140, 255, 0.18);
+  --hairline-accent: rgba(0, 190, 255, 0.22);
+
+  /* ── Text ── */
+  --text: #dde6f4;
+  --text-dim: #7a8ba4;
+  --text-faint: #4a5668;
+  --text-label: #a0b4cc;
+
+  /* ── Semantic accents ── */
+  --cyan: #00d4ff;       /* primary accent — live / selected */
+  --cyan-dim: rgba(0, 212, 255, 0.15);
+  --blue: #4a8fff;       /* map / data */
+  --green: #22d68a;      /* ok / healthy */
+  --amber: #f5a623;      /* caution / moderate */
+  --red: #ff3b4e;        /* critical / high alert */
+  --violet: #8f7cff;     /* information / secondary */
+  --teal: #00c4a7;       /* correction active */
+
+  /* ── Model color coding ── */
+  --m-adaptive: #00d4ff;
+  --m-raw: #7a8ba4;
+  --m-emos: #22d68a;
+  --m-qm: #f5a623;
+  --m-ml-emos: #8f7cff;
+
+  /* ── Alert severity ── */
+  --sev-high: #ff3b4e;
+  --sev-moderate: #f5a623;
+  --sev-low: #22d68a;
+
+  /* ── Typography ── */
+  --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, "Menlo", monospace;
+
+  /* ── Geometry ── */
+  --radius: 8px;
+  --radius-sm: 5px;
+  --radius-lg: 12px;
+  --blur: 12px;
+  --blur-sm: 6px;
+
+  /* ── Shadows ── */
+  --shadow-panel: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--hairline);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.5);
+  --shadow-glow-cyan: 0 0 20px rgba(0, 212, 255, 0.12);
+
+  /* ── Z-index ── */
+  --z-map: 0;
+  --z-hud: 20;
+  --z-panel: 25;
+  --z-nav: 30;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+}

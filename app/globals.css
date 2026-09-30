@@ -1,0 +1,72 @@
+/* MEGHAVYUHA Global CSS */
+@import "../styles/tokens.css";
+@import "../styles/components.css";
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+#__next,
+main {
+  height: 100%;
+}
+
+a {
+  color: var(--cyan);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--text);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Root layout */
+.raise-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Nav + content area */
+.raise-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Map root that sits beneath the HUD */
+.map-root {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-map);
+}
+
+/* HUD overlay — everything on top of the map */
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-hud);
+  display: flex;
+  flex-direction: column;
+}
+.hud > * {
+  pointer-events: auto;
+}

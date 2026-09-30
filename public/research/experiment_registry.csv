@@ -1,0 +1,4 @@
+Experiment_ID,Description,Dataset_Forecast,Dataset_Obs,Train_Period,Val_Period,Blind_Test_Period,N_Train_Dates,N_Val_Dates,N_Test_Dates,Primary_Metric,Raw_CRPS_mm,Atlas_CRPS_mm,CRPSS,Status
+EXP_01_PRIMARY_UTC,Primary Decadal Evaluation (UTC Calendar Day),"NOAA GEFSv12 (5-mem, Day+1)","UCSB CHIRPS v2.0 (0.25 deg, UTC)",2000-2017,2018,2019,46,9,21,CRPS,4.871,3.998,+17.9%,COMPLETED
+EXP_02_SECONDARY_IMD,Secondary Operational Evaluation (08:30 IST Window),"NOAA GEFSv12 (5-mem, Day+1 IST)","IMD Pune RF25 Gridded (0.25 deg, IST)",2000-2017,2018,2019,46,10,21,CRPS,6.716,5.847,+12.9%,COMPLETED
+EXP_03_LEAD_DECAY,Day+1 vs Day+3 Lead-Time Skill Sensitivity,NOAA GEFSv12 (Day+1 vs Day+3),UCSB CHIRPS v2.0 (UTC),2000-2017,2018,2019,46,9,21,CRPSS,0.000,"Day+1: +17.9%, Day+3: +11.2%",Decay: -6.7%,COMPLETED

@@ -1,0 +1,492 @@
+/* MEGHAVYUHA Component Styles */
+
+/* ═══════════════════════════════════════
+   PANEL — base glass panel
+   ═══════════════════════════════════════ */
+.panel {
+  background: var(--bg-panel);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-panel);
+}
+
+.panel-solid {
+  background: var(--bg-panel-solid);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-panel);
+}
+
+/* ═══════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--hairline);
+  background: var(--bg-input);
+  color: var(--text-dim);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.btn:hover {
+  border-color: var(--hairline-strong);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+.btn.active {
+  border-color: var(--cyan);
+  background: rgba(0, 212, 255, 0.12);
+  color: var(--cyan);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.15);
+}
+.btn.active-green {
+  border-color: var(--green);
+  background: rgba(34, 214, 138, 0.12);
+  color: var(--green);
+}
+.btn.active-amber {
+  border-color: var(--amber);
+  background: rgba(245, 166, 35, 0.12);
+  color: var(--amber);
+}
+.btn.active-red {
+  border-color: var(--red);
+  background: rgba(255, 59, 78, 0.12);
+  color: var(--red);
+}
+.btn-primary {
+  background: rgba(0, 212, 255, 0.15);
+  border-color: rgba(0, 212, 255, 0.35);
+  color: var(--cyan);
+  font-weight: 600;
+}
+.btn-primary:hover {
+  background: rgba(0, 212, 255, 0.25);
+}
+.btn-icon {
+  padding: 6px;
+  font-size: 14px;
+}
+.btn-group {
+  display: flex;
+  gap: 2px;
+}
+.btn-group .btn {
+  border-radius: 0;
+}
+.btn-group .btn:first-child {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+.btn-group .btn:last-child {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* ═══════════════════════════════════════
+   SECTION LABELS
+   ═══════════════════════════════════════ */
+.section-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 6px;
+}
+
+/* ═══════════════════════════════════════
+   METRIC DISPLAY
+   ═══════════════════════════════════════ */
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.metric-value {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  line-height: 1;
+}
+.metric-value.large {
+  font-size: 28px;
+}
+.metric-value.small {
+  font-size: 16px;
+}
+.metric-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+}
+.metric-unit {
+  font-size: 11px;
+  color: var(--text-faint);
+  font-weight: 400;
+}
+
+/* ═══════════════════════════════════════
+   STATUS BADGES
+   ═══════════════════════════════════════ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.badge-HIGH {
+  background: rgba(255, 59, 78, 0.15);
+  color: var(--red);
+  border: 1px solid rgba(255, 59, 78, 0.25);
+}
+.badge-MODERATE {
+  background: rgba(245, 166, 35, 0.15);
+  color: var(--amber);
+  border: 1px solid rgba(245, 166, 35, 0.25);
+}
+.badge-LOW {
+  background: rgba(34, 214, 138, 0.12);
+  color: var(--green);
+  border: 1px solid rgba(34, 214, 138, 0.2);
+}
+.badge-demo {
+  background: rgba(143, 124, 255, 0.12);
+  color: var(--violet);
+  border: 1px solid rgba(143, 124, 255, 0.2);
+  font-size: 9px;
+  padding: 2px 6px;
+}
+
+/* ═══════════════════════════════════════
+   STATUS DOT
+   ═══════════════════════════════════════ */
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.status-dot.ok { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.status-dot.demo { background: var(--amber); }
+.status-dot.down { background: var(--red); }
+
+/* ═══════════════════════════════════════
+   PROGRESS / WEIGHT BARS
+   ═══════════════════════════════════════ */
+.weight-bar-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.weight-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* ═══════════════════════════════════════
+   TABLE
+   ═══════════════════════════════════════ */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.data-table th {
+  padding: 6px 10px;
+  text-align: left;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  border-bottom: 1px solid var(--hairline);
+}
+.data-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  color: var(--text-dim);
+}
+.data-table tr:hover td {
+  background: rgba(0, 212, 255, 0.04);
+  color: var(--text);
+  cursor: pointer;
+}
+.data-table td.primary {
+  color: var(--text);
+  font-weight: 500;
+}
+.data-table td.cyan { color: var(--cyan); font-weight: 600; }
+.data-table td.amber { color: var(--amber); }
+.data-table td.red { color: var(--red); }
+.data-table td.green { color: var(--green); }
+
+/* ═══════════════════════════════════════
+   SCROLLBAR THEMING
+   ═══════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.12);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ═══════════════════════════════════════
+   MAPLIBRE CONTROL THEMING
+   ═══════════════════════════════════════ */
+.maplibregl-ctrl-attrib {
+  background: rgba(6, 8, 16, 0.75) !important;
+  color: var(--text-faint) !important;
+  font-size: 9px !important;
+}
+.maplibregl-ctrl-attrib a {
+  color: var(--text-dim) !important;
+}
+.maplibregl-ctrl-group {
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--hairline) !important;
+  border-radius: var(--radius-sm) !important;
+  overflow: hidden;
+  backdrop-filter: blur(var(--blur)) !important;
+}
+.maplibregl-ctrl button {
+  width: 30px !important;
+  height: 30px !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+.maplibregl-ctrl button:hover {
+  background-color: rgba(0, 212, 255, 0.1) !important;
+}
+.maplibregl-ctrl button span {
+  filter: invert(0.7) sepia(1) saturate(2) hue-rotate(180deg);
+}
+
+/* ═══════════════════════════════════════
+   DIVIDER
+   ═══════════════════════════════════════ */
+.divider {
+  height: 1px;
+  background: var(--hairline);
+  margin: 10px 0;
+}
+
+/* ═══════════════════════════════════════
+   SELECT / DROPDOWN
+   ═══════════════════════════════════════ */
+.select {
+  background: var(--bg-input);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  padding: 5px 8px;
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+}
+.select:focus {
+  border-color: var(--cyan);
+}
+
+/* ═══════════════════════════════════════
+   INPUT
+   ═══════════════════════════════════════ */
+.input {
+  background: var(--bg-input);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  padding: 6px 10px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+.input:focus {
+  border-color: var(--cyan);
+  background: rgba(0, 212, 255, 0.05);
+}
+.input::placeholder {
+  color: var(--text-faint);
+}
+
+/* ═══════════════════════════════════════
+   CHECKBOX / TOGGLE
+   ═══════════════════════════════════════ */
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-dim);
+  transition: color 0.15s;
+}
+.check-row:hover {
+  color: var(--text);
+}
+.check-box {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.check-box.checked {
+  background: rgba(0, 212, 255, 0.2);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+/* ═══════════════════════════════════════
+   CHIP / TAG
+   ═══════════════════════════════════════ */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 500;
+  border: 1px solid var(--hairline);
+  color: var(--text-dim);
+  background: var(--bg-input);
+}
+
+/* ═══════════════════════════════════════
+   MODAL / DRAWER
+   ═══════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 8, 16, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+.modal-panel {
+  width: 360px;
+  max-height: 90vh;
+  margin: 12px 12px 0 0;
+  overflow-y: auto;
+  animation: slide-in-right 0.25s ease;
+}
+@keyframes slide-in-right {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ═══════════════════════════════════════
+   PAGE HEADER
+   ═══════════════════════════════════════ */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.page-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.page-subtitle {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════
+   GRID UTILITIES
+   ═══════════════════════════════════════ */
+.metric-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.metric-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.metric-card {
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+}
+
+/* ═══════════════════════════════════════
+   CHART CONTAINER
+   ═══════════════════════════════════════ */
+.chart-container {
+  background: var(--bg-card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+}
+
+/* ═══════════════════════════════════════
+   ANIMATION UTILITIES
+   ═══════════════════════════════════════ */
+.pulse-dot {
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.fade-in {
+  animation: fade-in 0.3s ease;
+}
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
