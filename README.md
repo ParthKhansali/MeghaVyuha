@@ -270,4 +270,4 @@ npm run start
 - **Team Against The Odds** — Algorithmic Development, Geospatial Engineering & Validation
 
 ---
-*License: MIT License. See [LICENSE](file:///Users/parth/Developer/Raise-India/LICENSE) and [ATTRIBUTION.md](file:///Users/parth/Developer/Raise-India/ATTRIBUTION.md) for complete third-party dataset and map notices.*
+*License: MIT License. See [LICENSE](./LICENSE) and [ATTRIBUTION.md](./ATTRIBUTION.md) for complete third-party dataset and map notices.*
