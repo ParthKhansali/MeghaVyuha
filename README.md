@@ -266,7 +266,7 @@ npm run start
 **Against The Odds**  
 *Smart India Hackathon 2026 — Team ID: 149284*
 
-- **Parth Khansali** — Lead Engineer & System Architect
+- **Parth Khansali** ([@ParthKhansali](https://github.com/ParthKhansali) · [Case Study](https://www.parthkhansali.tech/projects/meghavyuha/)) — Lead Engineer & System Architect
 - **Team Against The Odds** — Algorithmic Development, Geospatial Engineering & Validation
 
 ---
